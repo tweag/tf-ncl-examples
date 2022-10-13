@@ -18,6 +18,7 @@
     nickel = tf-ncl.packages.${system}.nickel;
 
     run-terraform = pkgs.writeShellScriptBin "terraform" ''
+      set -e
       ln -sf ${self.ncl-schema.${system}} schema.ncl
       ${nickel}/bin/nickel -f main.tf.ncl export > main.tf.json
       ${terraform-with-plugins}/bin/terraform "$@"
