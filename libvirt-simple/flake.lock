@@ -234,8 +234,8 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1665678749,
-        "narHash": "sha256-Ap153mwZSxpUlFOLS88/oI9sKFLTrXQEdaR9ayet/PY=",
+        "lastModified": 1665755297,
+        "narHash": "sha256-zuIxph7IRLTuhlsD2HWQ4S5+mukgMkT5p+JiKaLTrPE=",
         "path": "../../terraform-contracts",
         "type": "path"
       },

@@ -12,9 +12,9 @@
       overlays = [ ];
     };
 
-    providers = p: with p; [ libvirt ];
+    providers = p: { inherit (p) libvirt; };
 
-    terraform-with-plugins = tf-ncl.packages.${system}.terraform.withPlugins providers;
+    terraform-with-plugins = tf-ncl.packages.${system}.terraform.withPlugins (p: pkgs.lib.attrValues (providers p));
     nickel = tf-ncl.packages.${system}.nickel;
 
     run-terraform = pkgs.writeShellScriptBin "terraform" ''
@@ -24,7 +24,7 @@
       ${terraform-with-plugins}/bin/terraform "$@"
     '';
   in {
-    ncl-schema = tf-ncl.schemas.${system}.libvirt; #TODO(vkleen): use generateSchema
+    ncl-schema = tf-ncl.generateSchema.${system} providers;
     pass = {
       terraform = utils.mkApp { drv = run-terraform; };
     };
