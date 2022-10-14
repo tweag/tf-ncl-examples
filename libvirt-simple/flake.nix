@@ -25,8 +25,8 @@
     '';
   in {
     ncl-schema = tf-ncl.generateSchema.${system} providers;
-    pass = {
-      terraform = utils.mkApp { drv = run-terraform; };
+    apps = {
+      terraform = utils.lib.mkApp { drv = run-terraform; };
     };
     devShell = pkgs.mkShell {
       buildInputs = [
