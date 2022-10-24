@@ -1,6 +1,7 @@
-{
+let Tf = import "./schema.ncl" in
+let cfg = {
   provider.libvirt = [
-    { uri = "qemu:///system" }
+    { uri = "qemu:///session" },
   ],
 
   resource."libvirt_network"."example" = {
@@ -29,12 +30,12 @@
     memory = 2048,
     vcpu = 2,
     network_interface = [{
-      network_id = "${libvirt_network.example.id}",
+      network_id = resource.libvirt_network.example.id,
       wait_for_lease = true,
       addresses = [ "10.17.3.2" ],
     }],
     disk = [{
-      volume_id = "${libvirt_volume.centos7-qcow2.id}",
+      volume_id = resource.libvirt_volume.centos7-qcow2.id,
       scsi = true,
       #TODO(vkleen): Someone somewhere is lying about optional fields
       file = "",
@@ -50,4 +51,5 @@
   },
 
 #TODO(vkleen): outputs?
-} | import "./schema.ncl"
+} | Tf.Configuration in
+Tf.mkConfig cfg
