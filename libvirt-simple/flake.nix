@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    tf-ncl.url = github:tweag/terraform-contracts;
+    tf-ncl.url = github:tweag/tf-ncl;
     utils.url = github:numtide/flake-utils;
   };
 
