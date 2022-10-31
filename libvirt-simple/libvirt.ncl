@@ -8,6 +8,9 @@ let recordMap' #: forall a b. (Str -> a -> {_: b}) -> {_: a} -> {_: b}
 let optionalRecord
       = fun b r => if b then r else {}
   in
+let non_empty
+      = fun r => array.length (record.fields r) != 0
+  in
 let sanitize : Str -> Str
       = string.replace_regex "(\\.)" "-"
   in
@@ -26,7 +29,8 @@ let NamedRecord = { "__name" | Str, .. }
       enable | Bool,
       local_only | Bool,
     },
-  }} | addNameField,
+  }} 
+    | addNameField,
 
   volumes | { _: {
     pool | Str
@@ -39,7 +43,8 @@ let NamedRecord = { "__name" | Str, .. }
       | optional,
     size | Num
       | optional,
-  }} | addNameField,
+  }}
+    | addNameField,
 
   domains | { _: {
     memory | Num,
@@ -69,16 +74,17 @@ let NamedRecord = { "__name" | Str, .. }
       #cloud-config
       %{builtin.serialize `Yaml config}
       "%m,
-    },
+    } | optional,
 
-  }} | addNameField,
+  }}
+    | addNameField,
 
   config | Tf.Configuration
     | default = {
       provider.libvirt = [
         { uri = "qemu:///session" }
       ],
-
+    } & optionalRecord (non_empty networks) {
       resource."libvirt_network" = recordMap' (fun n c => {
           "%{sanitize n}" = {
             name = n,
@@ -96,7 +102,7 @@ let NamedRecord = { "__name" | Str, .. }
             }],
           }
         }) networks,
-
+    } & optionalRecord (non_empty volumes) {
       resource."libvirt_volume" = recordMap' (fun n c => {
           "%{sanitize n}" = {
             name = n,
@@ -108,37 +114,26 @@ let NamedRecord = { "__name" | Str, .. }
               `QCow2 => "qcow2"
             } c.format,
           }) & (optionalRecord (record.has_field "base_volume" c) {
-            base_volume_id = resource."libvirt_volume"."%{sanitize c.base_volume."__name"}".id,
+            base_volume_id = config.resource."libvirt_volume"."%{sanitize c.base_volume."__name"}".id,
           }) & (optionalRecord (record.has_field "size" c) {
             size = c.size,
           }),
         }) volumes,
-
-      resource."libvirt_cloudinit_disk" = 
-        (recordMap' (fun n c =>
-          optionalRecord (record.has_field "cloudinit" c)
-          {
-            "__cloudinit-%{sanitize n}" = {
-              name = "__cloudinit-%{n}",
-              user_data = c.cloudinit.rendered_config,
-            }
-          }
-        ) domains),
-
+    } & optionalRecord (non_empty domains) {
       resource."libvirt_domain" = recordMap' (fun n c => {
           "%{sanitize n}" = {
             name = n,
             memory = c.memory,
             vcpu = c.vcpu,
             network_interface = array.map (fun c => {
-              network_id = resource."libvirt_network"."%{sanitize c.network."__name"}".id,
+              network_id = config.resource."libvirt_network"."%{sanitize c.network."__name"}".id,
               wait_for_lease = c.wait_for_lease,
               addresses = c.addresses,
             } & (optionalRecord (record.has_field "hostname" c) {
               hostname = c.hostname,
             })) c.network_interfaces,
             disk = array.map (fun c => {
-              volume_id = resource."libvirt_volume"."%{sanitize c.volume."__name"}".id,
+              volume_id = config.resource."libvirt_volume"."%{sanitize c.volume."__name"}".id,
               scsi = true,
               file = "",
               block_device = "",
@@ -155,9 +150,20 @@ let NamedRecord = { "__name" | Str, .. }
               target_port = c.target_port,
             }) c.consoles,
           } & (optionalRecord (record.has_field "cloudinit" c) {
-            cloudinit = resource."libvirt_cloudinit_disk"."__cloudinit-%{sanitize n}".id,
+            cloudinit = config.resource."libvirt_cloudinit_disk"."__cloudinit-%{sanitize n}".id,
           })
-      }) domains,
-    },
+        }) domains,
+    } & (optionalRecord (array.any (fun r => record.has_field "cloudinit" r) (record.values domains)) {
+      resource."libvirt_cloudinit_disk" = 
+        (recordMap' (fun n c =>
+          optionalRecord (record.has_field "cloudinit" c)
+          {
+            "__cloudinit-%{sanitize n}" = {
+              name = "__cloudinit-%{n}",
+              user_data = c.cloudinit.rendered_config,
+            }
+          }
+        ) domains),
+    }),
   renderable_config | default = Tf.mkConfig config,
 }
