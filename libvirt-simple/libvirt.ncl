@@ -80,7 +80,7 @@ let NamedRecord = { "__name" | Str, .. }
     | addNameField,
 
   config | Tf.Configuration
-    | default = {
+    | _push_default = {
       provider.libvirt = [
         { uri = "qemu:///session" }
       ],
