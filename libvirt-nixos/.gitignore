@@ -1,0 +1,4 @@
+.terraform*
+*.tf.json
+schema.ncl
+terraform.tfstate*
