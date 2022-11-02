@@ -1,14 +1,14 @@
 let Tf = import "./schema.ncl" in
-let recordMap' #: forall a b. (Str -> a -> {_: b}) -> {_: a} -> {_: b}
+let recordMap' | forall a b. (Str -> a -> {_: b}) -> {_: a} -> {_: b}
       = fun f r => array.fold
           (fun n acc => acc & (f n r."%{n}"))
           {}
           (record.fields r)
   in
-let optionalRecord
+let optionalRecord : forall r. Bool -> {_: r} -> {_: r}
       = fun b r => if b then r else {}
   in
-let non_empty
+let non_empty : forall r. {; Dyn} -> Bool
       = fun r => array.length (record.fields r) != 0
   in
 let sanitize : Str -> Str
