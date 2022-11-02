@@ -137,7 +137,7 @@ let NamedRecord = { "__name" | Str, .. }
             })) c.network_interfaces,
             disk = array.map (fun c => {
               volume_id = config.resource."libvirt_volume"."%{sanitize c.volume."__name"}".id,
-              scsi = true,
+              scsi = false,
               file = "",
               block_device = "",
               url = "",
