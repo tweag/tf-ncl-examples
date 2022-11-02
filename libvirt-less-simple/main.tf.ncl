@@ -1,8 +1,11 @@
 let Tf = import "./schema.ncl" in
 
-let for_count | Num -> (Num -> {;Dyn}) -> {;Dyn}
+let fold_fn : forall r. {;r} -> {;r} -> {;r}
+            = fun r acc => acc & r
+    in
+let for_count : forall r. Num -> (Num -> {;r}) -> {;r}
               = fun c f =>
-      array.fold (fun r acc => acc & r) {} (array.generate f c)
+      array.fold fold_fn {} (array.generate f c)
     in
 let num_masternodes = 1 in
 let num_workernodes = 2 in
@@ -16,11 +19,9 @@ let volume = fun resource tag c => {
     size = 42949672960,
   } in
 
-let cloud_init = (import "./cloud_init.ncl").cloud_init in
-
 let cloudinit = fun resource tag c => {
     pool = resource.libvirt_pool.local.name,
-    user_data = cloud_init {
+    user_data = (import "./cloud_init.ncl").cloud_init {
       hostname = "k8s-%{tag}-%{string.from c}",
       kube_version = kube,
       ssh_pubkey = pubkey,
