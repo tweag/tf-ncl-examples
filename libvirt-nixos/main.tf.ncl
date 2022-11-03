@@ -1,5 +1,3 @@
-{ nixos_image = "/nix/store/hv7l2m4zlrdwbvkjyk8l13hbx997wj0s-nixos-disk-image/nixos.img"
-} & (
 let
   PosNatMax = fun max l x =>
        contract.apply num.PosNat l x
@@ -62,4 +60,4 @@ import "./libvirt.ncl" & {
   },
 
   config.output."ip".value = array.head (array.head domains."nixos".network_interfaces).addresses,
-})
+}
