@@ -3,7 +3,7 @@ let
   NetworkMode = [| `NAT |]
   in
 let
-  network_mode_to_str = fun x => switch {
+  networkModeToStr = fun x => switch {
     `NAT => "nat",
   } x
   in
@@ -20,11 +20,11 @@ let
   } } | lib.addNameField,
 
 
-  config | _push_default = lib.optionalRecord (lib.non_empty networks) {
+  config | _push_default = lib.optionalRecord (lib.nonEmpty networks) {
     resource."libvirt_network" = lib.recordMap' (fun n net => {
-      "%{net."sanitized_name__"}" = {
+      "%{net."sanitizedName__"}" = {
         name = n,
-        mode = network_mode_to_str net.mode,
+        mode = networkModeToStr net.mode,
         domain = net.domain,
         dhcp = [{
           enabled = net.dhcp,

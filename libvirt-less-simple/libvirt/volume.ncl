@@ -3,7 +3,7 @@ let
   VolumeFormat = [| `QCow2 |]
   in
 let
-  volume_format_to_str = fun x => switch {
+  volumeFormatToStr = fun x => switch {
     `QCow2 => "qcow2",
   } x
   in
@@ -22,17 +22,17 @@ let
   } } | lib.addNameField,
 
   config | (import "./schema.ncl").Configuration
-    | _push_default = lib.optionalRecord (lib.non_empty volumes) {
+    | _push_default = lib.optionalRecord (lib.nonEmpty volumes) {
       resource."libvirt_volume" = lib.recordMap' (fun n vol => {
-        "%{vol."sanitized_name__"}" = {
+        "%{vol."sanitizedName__"}" = {
           name = n,
           pool = vol.pool,
         } & lib.optionalRecord (record.has_field "source" vol) {
           source = vol.source,
         } & lib.optionalRecord (record.has_field "format" vol) {
-          format = volume_format_to_str vol.format,
+          format = volumeFormatToStr vol.format,
         } & lib.optionalRecord (record.has_field "base_volume" vol) {
-          base_volume_id = config.resource."libvirt_volume"."%{vol.base_volume."sanitized_name__"}".id,
+          base_volume_id = config.resource."libvirt_volume"."%{vol.base_volume."sanitizedName__"}".id,
         } & lib.optionalRecord (record.has_field "size" vol) {
           size = vol.size,
         },

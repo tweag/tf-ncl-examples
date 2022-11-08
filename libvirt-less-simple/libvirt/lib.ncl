@@ -2,10 +2,10 @@
   optionalRecord : forall r. Bool -> {_: r} -> {_: r}
       = fun b r => if b then r else {},
 
-  non_empty : forall r. {; Dyn} -> Bool
+  nonEmpty : forall r. {; Dyn} -> Bool
       = fun r => array.length (record.fields r) != 0,
 
-  tf_sanitize : Str -> Str
+  tfSanitize : Str -> Str
       = string.replace_regex "(\\.)" "-",
 
   recordMap' | forall a b. (Str -> a -> {_: b}) -> {_: a} -> {_: b}
@@ -14,11 +14,11 @@
           {}
           (record.fields r),
 
-  NamedRecord = { "__name" | Str, .. },
+  NamedRecord = { "name__" | Str, .. },
 
   addNameField = fun l x =>
       x |> record.map (fun name r => r & {
         "name__" | force = "%{name}"
-        "sanitized_name__" | default = tf_sanitize name__,
+        "sanitizedName__" | default = tfSanitize name__,
       }),
 }
