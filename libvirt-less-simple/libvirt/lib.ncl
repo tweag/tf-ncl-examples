@@ -16,4 +16,6 @@
           (fun n acc => acc & (f n r."%{n}"))
           {}
           (record.fields r),
+
+  NamedRecord = { "__name" | Str, .. },
 }

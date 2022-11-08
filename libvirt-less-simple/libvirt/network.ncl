@@ -22,16 +22,18 @@ let
 
   config | _push_default = lib.optionalRecord (lib.non_empty networks) {
     resource."libvirt_network" = lib.recordMap' (fun n net => {
-      name = n,
-      mode = network_mode_to_str net.mode,
-      domain = c.domain,
-      dhcp = [{
-        enabled = c.dhcp,
-      }],
-      dns = [{
-        enabled = c.dns.enable,
-        local_only = c.dns.local_only,
-      }],
-    },
+      "%{lib.sanitize n}" = {
+        name = n,
+        mode = network_mode_to_str net.mode,
+        domain = c.domain,
+        dhcp = [{
+          enabled = c.dhcp,
+        }],
+        dns = [{
+          enabled = c.dns.enable,
+          local_only = c.dns.local_only,
+        }],
+      },
+    }),
   },
 }

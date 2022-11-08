@@ -10,3 +10,4 @@ let LibvirtTf = import "./libvirt/schema.ncl" in
   renderable_config | default = LibvirtTf.mkConfig config,
 }
 & import "./libvirt/network.ncl"
+& import "./libvirt/volume.ncl"
