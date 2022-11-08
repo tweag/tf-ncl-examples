@@ -1,7 +1,4 @@
 {
-  addNameField = fun l x =>
-      x |> record.map (fun name r => r & { "__name" | force = "%{name}" }),
-
   optionalRecord : forall r. Bool -> {_: r} -> {_: r}
       = fun b r => if b then r else {},
 
@@ -18,4 +15,10 @@
           (record.fields r),
 
   NamedRecord = { "__name" | Str, .. },
+
+  addNameField = fun l x =>
+      x |> record.map (fun name r => r & {
+        "__name" | force = "%{name}"
+        "__sanitized_name" | default = tf_sanitize __name,
+      }),
 }

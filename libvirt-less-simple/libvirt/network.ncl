@@ -22,7 +22,7 @@ let
 
   config | _push_default = lib.optionalRecord (lib.non_empty networks) {
     resource."libvirt_network" = lib.recordMap' (fun n net => {
-      "%{lib.sanitize n}" = {
+      "%{net."__sanitized_name"}" = {
         name = n,
         mode = network_mode_to_str net.mode,
         domain = c.domain,
