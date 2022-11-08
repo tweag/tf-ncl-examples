@@ -24,7 +24,7 @@ let
   config | (import "./schema.ncl").Configuration
     | _push_default = lib.optionalRecord (lib.non_empty volumes) {
       resource."libvirt_volume" = lib.recordMap' (fun n vol => {
-        "%{vol."__sanitized_name"}" = {
+        "%{vol."sanitized_name__"}" = {
           name = n,
           pool = vol.pool,
         } & lib.optionalRecord (record.has_field "source" vol) {
@@ -32,7 +32,7 @@ let
         } & lib.optionalRecord (record.has_field "format" vol) {
           format = volume_format_to_str vol.format,
         } & lib.optionalRecord (record.has_field "base_volume" vol) {
-          base_volume_id = config.resource."libvirt_volume"."%{vol.base_volume."__sanitized_name"}".id,
+          base_volume_id = config.resource."libvirt_volume"."%{vol.base_volume."sanitized_name__"}".id,
         } & lib.optionalRecord (record.has_field "size" vol) {
           size = vol.size,
         },
