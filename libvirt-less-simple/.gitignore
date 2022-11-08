@@ -1,4 +1,4 @@
 .terraform*
 *.tf.json
-schema.ncl
+/schema.ncl
 terraform.tfstate*
