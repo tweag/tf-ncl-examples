@@ -3,9 +3,9 @@ let
   NetworkMode = [| `NAT |]
   in
 let
-  network_mode_to_str = switch {
-    `NAT =< "nat",
-  }
+  network_mode_to_str = fun x => switch {
+    `NAT => "nat",
+  } x
   in
 {
   networks | {_: {
