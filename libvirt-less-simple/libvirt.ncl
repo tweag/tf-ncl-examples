@@ -5,7 +5,7 @@ let LibvirtTf = import "./libvirt/schema.ncl" in
       provider.libvirt = [
         { uri = "qemu://session" }
       ],
-  },
+    },
 
   renderable_config | default = LibvirtTf.mkConfig config,
 }

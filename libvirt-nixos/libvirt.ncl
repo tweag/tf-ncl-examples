@@ -168,5 +168,5 @@ let NamedRecord = { "__name" | Str, .. }
           }
         ) domains),
     }),
-  renderable_config | default = Tf.mkConfig config,
+  renderable_config | _push_default = Tf.mkConfig config,
 }

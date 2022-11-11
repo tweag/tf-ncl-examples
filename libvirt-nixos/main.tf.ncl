@@ -60,4 +60,8 @@ import "./libvirt.ncl" & {
   },
 
   config.output."ip".value = array.head (array.head domains."nixos".network_interfaces).addresses,
+  
+  renderable_config.resource."libvirt_domain"."nixos".provisioner."local-exec".command = m%"
+    echo 'Hello, world!'
+  "%m,
 }

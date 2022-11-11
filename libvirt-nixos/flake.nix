@@ -35,7 +35,13 @@
   in rec {
     ncl-schema = tf-ncl.generateSchema.${system} providers;
     apps = {
+      default = apps.terraform;
       terraform = utils.lib.mkApp { drv = run-terraform; };
+    };
+
+    packages = {
+      default = packages.terraform;
+      terraform = run-terraform;
     };
 
     nixosConfigurations.test = inputs.nixpkgs.lib.nixosSystem {
@@ -45,6 +51,8 @@
         "${inputs.nixpkgs}/nixos/modules/profiles/qemu-guest.nix"
         ({config, pkgs, lib, ...}: {
           config = {
+            system.stateVersion = "22.11";
+
             fileSystems."/" = {
               device = "/dev/disk/by-label/nixos";
               fsType = "ext4";
