@@ -30,7 +30,8 @@ let NamedRecord = { "__name" | Str, .. }
       local_only | Bool,
     },
   }} 
-    | addNameField,
+    | addNameField
+    | default = {},
 
   volumes | { _: {
     pool | Str
@@ -44,7 +45,8 @@ let NamedRecord = { "__name" | Str, .. }
     size | Num
       | optional,
   }}
-    | addNameField,
+    | addNameField
+    | default = {},
 
   domains | { _: {
     memory | Num,
@@ -77,7 +79,8 @@ let NamedRecord = { "__name" | Str, .. }
     } | optional,
 
   }}
-    | addNameField,
+    | addNameField
+    | default = {},
 
   config | Tf.Configuration
     | _push_default = {
@@ -165,5 +168,5 @@ let NamedRecord = { "__name" | Str, .. }
           }
         ) domains),
     }),
-  renderable_config | default = Tf.mkConfig config,
+  renderable_config | _push_default = Tf.mkConfig config,
 }

@@ -29,7 +29,7 @@ let NamedRecord = { "__name" | Str, .. }
       enable | Bool,
       local_only | Bool,
     },
-  }}
+  }} 
     | addNameField
     | default = {},
 
@@ -62,13 +62,13 @@ let NamedRecord = { "__name" | Str, .. }
 
     disks | Array {
       volume | NamedRecord,
-    } | default = [],
+    },
 
     consoles | Array {
       type | [| `Pty |],
       target_type | [| `Serial |],
       target_port | Str,
-    } | default = [],
+    },
 
     cloudinit | {
       config | default = {},
@@ -137,7 +137,7 @@ let NamedRecord = { "__name" | Str, .. }
             })) c.network_interfaces,
             disk = array.map (fun c => {
               volume_id = config.resource."libvirt_volume"."%{sanitize c.volume."__name"}".id,
-              scsi = false,
+              scsi = true,
               file = "",
               block_device = "",
               url = "",
