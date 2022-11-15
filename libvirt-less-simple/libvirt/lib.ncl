@@ -18,7 +18,7 @@
 
   addNameField = fun l x =>
       x |> record.map (fun name r => r & {
-        "name__" | force = "%{name}"
+        "name__" | force = "%{name}",
         "sanitizedName__" | default = tfSanitize name__,
       }),
 }

@@ -19,7 +19,8 @@ let
       | optional,
     size | Num
       | optional,
-  } } | lib.addNameField,
+  } } | lib.addNameField
+      | default = {},
 
   config | (import "./schema.ncl").Configuration
     | _push_default = lib.optionalRecord (lib.nonEmpty volumes) {

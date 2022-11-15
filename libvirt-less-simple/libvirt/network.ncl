@@ -17,7 +17,8 @@ let
       enable | Bool,
       local_only | Bool,
     },
-  } } | lib.addNameField,
+  } } | lib.addNameField
+      | default = {},
 
 
   config | _push_default = lib.optionalRecord (lib.nonEmpty networks) {
