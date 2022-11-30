@@ -492,11 +492,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1669380717,
-        "narHash": "sha256-mE2EC1jXMP8G91f/Nsm7OHZrdWwGPW5qjjzJ14ddma0=",
+        "lastModified": 1669812093,
+        "narHash": "sha256-suJ87hzk8x5/3PuXbxDca3kvjR9IDTgrFlBj9FDktd0=",
         "owner": "tweag",
         "repo": "tf-ncl",
-        "rev": "dbf263e292efee9bc728274951b83799704c5267",
+        "rev": "a0b4d723505b6179491c74d50b6d96efa53906c3",
         "type": "github"
       },
       "original": {
