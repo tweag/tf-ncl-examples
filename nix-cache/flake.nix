@@ -20,9 +20,6 @@
     terraform-with-plugins = inputs.tf-ncl.packages.${system}.terraform.withPlugins (p: pkgs.lib.attrValues (providers p));
     nickel = inputs.nickel.packages.${system}.default;
 
-    mkShellApp = body:
-      utils.lib.mkApp { drv = pkgs.writeShellScriptBin "script.sh" body; };
-
     run-terraform = pkgs.writeShellScriptBin "terraform" ''
       set -e
       ln -sf ${self.ncl-schema.${system}} schema.ncl
