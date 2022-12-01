@@ -1,4 +1,4 @@
-let cfg = (import "./libvirt.ncl") & {
+{
   networks."example" = {
     mode = `NAT,
     domain = "example.test",
@@ -58,5 +58,4 @@ let cfg = (import "./libvirt.ncl") & {
   },
 
   config.output."ip".value = array.head (array.head domains."ubuntu".network_interfaces).addresses,
-} in
-cfg.renderable_config
+} | import "./libvirt.ncl"

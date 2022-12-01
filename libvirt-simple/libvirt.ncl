@@ -97,8 +97,7 @@ let NamedRecord = { "__name" | Str, .. }
     | addNameField
     | default = {},
 
-  config | Tf.Configuration
-    | _push_default = {
+  config = {
       provider.libvirt = [
         { uri = "qemu:///session" }
       ],
@@ -186,5 +185,4 @@ let NamedRecord = { "__name" | Str, .. }
           }
         ) domains),
     }),
-  renderable_config | _push_default = Tf.mkConfig config,
-}
+} | Tf.Config
