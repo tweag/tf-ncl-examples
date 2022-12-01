@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
+    nickel.url = github:tweag/nickel;
     tf-ncl.url = github:tweag/tf-ncl;
     utils.url = github:numtide/flake-utils;
   };
@@ -15,18 +16,17 @@
     providers = p: { inherit (p) libvirt; };
 
     terraform-with-plugins = tf-ncl.packages.${system}.terraform.withPlugins (p: pkgs.lib.attrValues (providers p));
-    nickel = tf-ncl.packages.${system}.nickel;
-
-    mkShellApp = body:
-      utils.lib.mkApp { drv = pkgs.writeShellScriptBin "script.sh" body; };
+    nickel = inputs.nickel.packages.${system}.default;
 
     run-terraform = pkgs.writeShellScriptBin "terraform" ''
       set -e
       ln -sf ${self.ncl-schema.${system}} schema.ncl
       ${nickel}/bin/nickel export > main.tf.json <<EOF
-        ({ 
-          nixos-image = "${self.nixosConfigurations.${system}.test.config.system.build.image}/nixos.img",
-        } & import "./main.tf.ncl").renderable_config
+        # This triggers https://github.com/tweag/nickel/issues/962
+        # ({ 
+        #   nixos-image = "${self.nixosConfigurations.${system}.test.config.system.build.image}/nixos.img",
+        # } & import "./main.tf.ncl").renderable_config
+        (import "./main.tf.ncl").renderable_config
       EOF
       ${terraform-with-plugins}/bin/terraform "$@"
     '';

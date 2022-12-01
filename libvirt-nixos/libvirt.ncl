@@ -1,9 +1,24 @@
 let Tf = import "./schema.ncl" in
-let recordMap' | forall a b. (Str -> a -> {_: b}) -> {_: a} -> {_: b}
+
+let fail | forall a. a = null | Num in
+let fields' | forall a. {_: a} -> Array Str = record.fields in
+
+let recordMap' : forall a b. (Str -> a -> {key: Str, value: b}) -> {_: a} -> {_: b}
+      = fun f r => array.fold
+          (fun n acc => 
+            let pair = f n r."%{n}" in
+            if record.has_field pair.key acc then
+              fail
+            else
+              record.insert pair.key pair.value acc)
+          {}
+          (fields' r)
+  in
+let recordMap'' | forall a b. (Str -> a -> {_: b}) -> {_: a} -> {_: b}
       = fun f r => array.fold
           (fun n acc => acc & (f n r."%{n}"))
           {}
-          (record.fields r)
+          (fields' r)
   in
 let optionalRecord : forall r. Bool -> {_: r} -> {_: r}
       = fun b r => if b then r else {}
@@ -29,6 +44,7 @@ let NamedRecord = { "__name" | Str, .. }
       enable | Bool,
       local_only | Bool,
     },
+    ..
   }} 
     | addNameField
     | default = {},
@@ -44,6 +60,7 @@ let NamedRecord = { "__name" | Str, .. }
       | optional,
     size | Num
       | optional,
+    ..
   }}
     | addNameField
     | default = {},
@@ -72,24 +89,25 @@ let NamedRecord = { "__name" | Str, .. }
 
     cloudinit | {
       config | default = {},
-      rendered_config | default = m%"
+      rendered_config = m%"
       #cloud-config
       %{builtin.serialize `Yaml config}
       "%m,
     } | optional,
-
+    ..
   }}
-    | addNameField
+#| addNameField
     | default = {},
 
-  config | Tf.Configuration
+  config
     | _push_default = {
       provider.libvirt = [
         { uri = "qemu:///session" }
       ],
     } & optionalRecord (non_empty networks) {
       resource."libvirt_network" = recordMap' (fun n c => {
-          "%{sanitize n}" = {
+          key = "%{sanitize n}",
+          value = {
             name = n,
             mode = switch {
               `NAT => "nat"
@@ -107,7 +125,8 @@ let NamedRecord = { "__name" | Str, .. }
         }) networks,
     } & optionalRecord (non_empty volumes) {
       resource."libvirt_volume" = recordMap' (fun n c => {
-          "%{sanitize n}" = {
+          key = "%{sanitize n}",
+          value = {
             name = n,
             pool = c.pool,
           } & (optionalRecord (record.has_field "source" c) {
@@ -124,7 +143,8 @@ let NamedRecord = { "__name" | Str, .. }
         }) volumes,
     } & optionalRecord (non_empty domains) {
       resource."libvirt_domain" = recordMap' (fun n c => {
-          "%{sanitize n}" = {
+          key = "%{sanitize n}",
+          value = {
             name = n,
             memory = c.memory,
             vcpu = c.vcpu,
@@ -158,7 +178,7 @@ let NamedRecord = { "__name" | Str, .. }
         }) domains,
     } & (optionalRecord (array.any (fun r => record.has_field "cloudinit" r) (record.values domains)) {
       resource."libvirt_cloudinit_disk" = 
-        (recordMap' (fun n c =>
+        (recordMap'' (fun n c =>
           optionalRecord (record.has_field "cloudinit" c)
           {
             "__cloudinit-%{sanitize n}" = {
@@ -168,5 +188,4 @@ let NamedRecord = { "__name" | Str, .. }
           }
         ) domains),
     }),
-  renderable_config | _push_default = Tf.mkConfig config,
-}
+} | Tf.Config

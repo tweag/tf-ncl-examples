@@ -14,10 +14,8 @@ let v4_addresses = {
     
     subnet = "%{subnet_prefix}.0/%{string.from prefix_length}",
   } in
-import "./libvirt.ncl" & {
-  # TODO(vkleen): Record merging is broken in the presence of dictionaries, hardcode the image path until fixed
-  nixos_image | Str
-    = "/nix/store/8v70banam8nfd2xsamz0fxkcc9msp288-nixos-disk-image/nixos.img",
+{
+  nixos_image | Str | default = "/nix/store/rb900g1zaqr7hg6yz72ws0mbir4yaxlp-nixos-disk-image/nixos.img",
 
   networks."example" = {
     mode = `NAT,
@@ -64,4 +62,4 @@ import "./libvirt.ncl" & {
   renderable_config.resource."libvirt_domain"."nixos".provisioner."local-exec".command = m%"
     echo 'Hello, world!'
   "%m,
-}
+} | import "./libvirt.ncl"
