@@ -22,8 +22,7 @@ let
   } } | lib.addNameField
       | default = {},
 
-  config | (import "./schema.ncl").Configuration
-    | _push_default = lib.optionalRecord (lib.nonEmpty volumes) {
+  config | (import "./schema.ncl").Schema = lib.optionalRecord (lib.nonEmpty volumes) {
       resource."libvirt_volume" = lib.recordMap' (fun n vol => {
         "%{vol."sanitizedName__"}" = {
           name = n,

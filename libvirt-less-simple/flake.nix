@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    nickel.url = github:tweag/nickel;
     tf-ncl.url = github:tweag/tf-ncl;
     utils.url = github:numtide/flake-utils;
   };
@@ -15,7 +16,7 @@
     providers = p: { inherit (p) libvirt local cloudinit; };
 
     terraform-with-plugins = tf-ncl.packages.${system}.terraform.withPlugins (p: pkgs.lib.attrValues (providers p));
-    nickel = tf-ncl.packages.${system}.nickel;
+    nickel = inputs.nickel.packages.${system}.default;
 
     run-terraform = pkgs.writeShellScriptBin "terraform" ''
       set -e

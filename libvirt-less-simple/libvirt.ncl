@@ -1,13 +1,12 @@
 let LibvirtTf = import "./libvirt/schema.ncl" in
 {
-  config | LibvirtTf.Configuration
-    | _push_default = {
+  config | LibvirtTf.Schema = {
       provider.libvirt = [
         { uri = "qemu://session" }
       ],
     },
-
-  renderable_config | default = LibvirtTf.mkConfig config,
+    renderable_config = LibvirtTf.mkConfig config,
 }
 & import "./libvirt/network.ncl"
 & import "./libvirt/volume.ncl"
+& import "./libvirt/domain.ncl"
