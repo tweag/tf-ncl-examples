@@ -39,6 +39,8 @@ let private-key-path = "./ec2_key" in
     resource.aws_key_pair.ssh_key = {
       public_key = "${data.external.ssh_key.result.public_key}",
     },
+
+    output."instance_ip".value = aws.simple.ec2.instances.test.public_ip,
   },
 }
 | Aws.Simple

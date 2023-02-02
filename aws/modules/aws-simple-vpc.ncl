@@ -89,4 +89,3 @@ let Utils = import "../utils.ncl" in
     },
   }) |> Utils.merge_array,
 }
-| import "./aws-availability-zones.ncl"
