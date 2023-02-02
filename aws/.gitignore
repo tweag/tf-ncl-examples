@@ -1,4 +1,4 @@
 .terraform*
+*_key
 *.tf.json
 schema.ncl
-terraform.tfstate*
