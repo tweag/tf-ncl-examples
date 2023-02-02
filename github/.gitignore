@@ -1,0 +1,4 @@
+.terraform*
+*_key
+*.tf.json
+schema.ncl
