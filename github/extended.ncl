@@ -1,5 +1,3 @@
 import "base.ncl" & {
-  users = {
-    rando = {}
-  }
+  users.rando = {}
 }

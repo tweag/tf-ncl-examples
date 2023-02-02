@@ -1,14 +1,15 @@
-let infra = import "./terraform.ncl" in
-infra & {
-  users | infra.Users
-    = {
-      vkleen = {
-        is-admin = false,
-        extra-teams = [ "nickel" ],
-      },
-      yannham = {
-        is-admin = true,
-        extra-teams = [ "nickel" ],
-      },
-    }
+let Tf = import "./schema.ncl" in
+let User = import "./user-contract.ncl" in
+let { mk_teams, mk_memberships, .. } = import "./lib.ncl" in
+{
+  Users = {_: User},
+  users | Users
+    = import "./users.ncl",
+
+  config = {
+    terraform.required_providers = Tf.required_providers,
+  }
+  & mk_memberships users
+  & mk_teams config users,
 }
+| Tf.Config
