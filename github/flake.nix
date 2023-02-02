@@ -22,9 +22,17 @@
 
     run-terraform = pkgs.writeShellScriptBin "terraform" ''
       set -e
+      if [[ "$#" -le 1 ]]; then
+        echo "terraform <ncl-file> ..."
+        exit 1
+      fi
+
+      ENTRY="''${1}"
+      shift
+
       ln -sf ${self.packages.${system}.ncl-schema} schema.ncl
       ${nickel}/bin/nickel export > main.tf.json <<EOF
-        (import "./main.tf.ncl").renderable_config
+        (import "''${ENTRY}").renderable_config
       EOF
       ${terraform-with-plugins}/bin/terraform "$@"
     '';

@@ -1,8 +1,9 @@
 let Tf = import "./schema.ncl" in
-let users' = import "./users.ncl" in
+let User = import "./user-contract.ncl" in
 let { mk_teams, mk_memberships, .. } = import "./lib.ncl" in
 {
-  users = users',
+  Users = {_: User},
+  users | Users,
 
   config = {
     terraform.required_providers = Tf.required_providers,
