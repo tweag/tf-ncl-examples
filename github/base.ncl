@@ -1,9 +1,12 @@
 let Tf = import "./schema.ncl" in
 let User = import "./user-contract.ncl" in
+let { TwoAdmins, .. } = import "./validation.ncl" in
 let { mk_teams, mk_memberships, .. } = import "./lib.ncl" in
 {
   Users = {_: User},
-  users | Users
+
+  users
+    | Users
     = import "./users.ncl",
 
   config = {
