@@ -25,10 +25,10 @@ let Aws = import "./types.ncl" in
   ) & (
     if record.has_field "assume_role" aws.credentials
     then {
-      assume_role = {
+      assume_role = [{
         role_arn = aws.credentials.assume_role.role_arn,
         session_name = aws.credentials.assume_role.session_name,
-      }
+      }]
     }
     else {}
   )],

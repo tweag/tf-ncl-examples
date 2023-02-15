@@ -1,9 +1,9 @@
 {
   inputs = {
-    nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
-    nickel.url = github:tweag/nickel;
-    tf-ncl.url = github:tweag/tf-ncl;
-    utils.url = github:numtide/flake-utils;
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nickel.url = "github:tweag/nickel";
+    tf-ncl.url = "github:tweag/tf-ncl";
+    utils.url = "github:numtide/flake-utils";
   };
 
   outputs = { self, utils, ... }@inputs: utils.lib.eachDefaultSystem (system: let
